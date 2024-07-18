@@ -210,6 +210,7 @@ async def get_trigger(callback: types.CallbackQuery, state: FSMContext, bot: Bot
 
     await callback.answer() # ответ для сервера о нажатии кнопки.
 
+
     # Изменяем предыдущее состояние
     await callback.message.edit_text(text=f'Хорошо. Для начала определимся с локацией.\n'
                                           f'Для какого города нужно будет отслеживать изменения? '
