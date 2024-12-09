@@ -110,10 +110,9 @@ async def get_country_coordinate(API_WEATHER, input_city_name, input_limit=None)
                 return data[0]['lat'], data[0]['lon'], data[0].get('country')
             else:
                 print("Город не найден")
-                return None, None
+                return None, None, None
 
                 # raise ValueError("Город не найден")
-
 
 
 async def get_weather_by_coordinate(lat, lon, API_WEATHER, url_type_prognosis: str):
@@ -125,6 +124,11 @@ async def get_weather_by_coordinate(lat, lon, API_WEATHER, url_type_prognosis: s
     :param API_WEATHER: API ключ для OpenWeatherMap
     :return: Данные о погоде
 
+    metric  - units	необязательно	Доступны единицы измерения. standard, metric и imperial единицы измерения.
+    cnt - Чтобы ограничить количество временных меток в ответе API, пожалуйста, настройте cnt.
+
+
+
     """
 
     # По условию выдаем тип  url для получения различного рода прогноза, возвращаем json
@@ -133,25 +137,34 @@ async def get_weather_by_coordinate(lat, lon, API_WEATHER, url_type_prognosis: s
 
         url = f'https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API_WEATHER}&units=metric'
 
+    elif url_type_prognosis == '5day':  # Прогноз на 5 дней с разбивкой по 3 часа + (в нашем варианте = 48 часов).
+
+        # Запрос по этому URL возвращает прогноз погоды с часовым интервалом на ближайшие 48 часов и текущие данные,
+        # исключая данные по минутам и ежедневные прогнозы.
+        url = (f'https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude=minutely,'
+               f'daily&appid={API_WEATHER}&units=metric')
+
+        # minutely: Исключает данные о погоде по минутам.
+        # В запросе /data/2.5/onecall можно получить данные о погоде каждую минуту,
+        #  но если вам не нужны такие данные, вы можете исключить их с помощью этого параметра.
+
+        # daily: Исключает данные о погоде по дням.
+        # В запросе /data/2.5/onecall вы можете получить ежедневный прогноз на несколько дней вперед.
+        # Если вам нужны только краткосрочные данные, например, почасовой прогноз, вы можете исключить эти данные.
+
     # elif url_type_prognosis == 'week':  # Прогноз на неделю +
 
-        # url = (f'https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude=current,minutely,hourly,'
-        #        f'alerts&appid={API_WEATHER}&units=metric&lang=ru')
+    # url = (f'https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude=current,minutely,hourly,'
+    #        f'alerts&appid={API_WEATHER}&units=metric&lang=ru')
 
     # elif url_type_prognosis == 'in_date':  # Прогноз на дату
 
-
-        # url = f'https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API_WEATHER}&units=metric'
-
-
-
+    # url = f'https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API_WEATHER}&units=metric'
 
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
             data = await response.json()
             return data
-
-
 
     # prognosis = []
     # for day in data['daily']:
@@ -164,9 +177,6 @@ async def get_weather_by_coordinate(lat, lon, API_WEATHER, url_type_prognosis: s
     #
     #     prognosis.append(f"{date} - {description}, днём: {temperature_day}°C, ночью: "
     #                      f"{temperature_night}°C, [Иконка]({icon_url})")
-
-
-
 
 
 # Выдать погоду (json на выходе)

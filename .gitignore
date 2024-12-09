@@ -1,0 +1,8 @@
+.venv/*.*
+.idea/*.*
+.gitignore
+.env
+.xml
+.idea/
+.venv/*
+./profiles_settings.xml
