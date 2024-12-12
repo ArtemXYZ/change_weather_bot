@@ -5,6 +5,8 @@ from cores.core_OpenWeathermap.change import *
 from config_pack.configs import API_WEATHER
 
 from cores.coordinate_data import *
+# from config_pack.code_printer import beauty_code
+
 
 
 async def run_tests():

@@ -118,7 +118,9 @@ async def get_hourly_forecast_json(gridId, gridX, gridY):
 
 
 async def get_hourly_forecast(latitude, longitude):
-
+    """
+        Получаем погоду, финальная функция.
+    """
 
     grid_json = await get_grid_json(latitude, longitude)
 
@@ -133,7 +135,7 @@ async def get_hourly_forecast(latitude, longitude):
     forecasts_json = await get_hourly_forecast_json(gridId, gridX, gridY)
 
     if forecasts_json:
-        return forecasts_json["properties"]["periods"] # forecasts
+        return forecasts_json["properties"]["periods"]  # forecasts
 
     else:
         print("Получение почасового прогноза завершилось неудачей.")
