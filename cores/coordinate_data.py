@@ -19,11 +19,11 @@ async def decode_address(input_address: str):
                 'lat': '52.6664095', # Широта
                 'lon': '52.3978605', # Долгота
 
-                'class': 'waterway',
-                'type': 'river', # Судоходный или нет.
+                'class': 'waterway | building | shop',
+                'type': 'river | apartments | convenience | administrative', # Судоходный или нет.
                 'place_rank': 18, # Место в рейтинге.
                 'importance': 0.4758467396969812, # важность\\значение
-                'addresstype': 'river',   # Тип адреса.
+                'addresstype': 'river | building | village',   # Тип адреса.
 
                 'name': 'Самара',  # Имя города.
                 'display_name': 'Самара, Приволжский федеральный округ, Россия', # Адрес.
@@ -56,7 +56,7 @@ async def decode_address(input_address: str):
 
     url = f"https://nominatim.openstreetmap.org/search?format=json&q={input_address}"
     data = await get_response_aiohttp(url)  # Делаем GET запрос к API Nominatim
-    # print(data)
+    print(data)
 
     if data:
 
@@ -64,7 +64,7 @@ async def decode_address(input_address: str):
 
             latitude = response_variant['lat']  # Широта
             longitude = response_variant['lon']  # Долгота
-            city_name = response_variant['name']  # Имя города.
+            city_name = response_variant['name']  # Имя города \ Организации (магазин или другое по адресу).
             autput_address = response_variant['display_name']  # Адрес.
 
             response_part = {numb: (latitude, longitude, city_name, autput_address)}
